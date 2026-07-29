@@ -1,0 +1,18 @@
+*.iml
+.gradle/
+/local.properties
+/apikey.properties
+.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+
+app/build/
+build/
+
+# Vosk wake-word model is downloaded on first use, never committed
+*.vosk-model/

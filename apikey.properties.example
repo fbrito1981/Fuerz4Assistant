@@ -1,0 +1,9 @@
+# Copy this file to apikey.properties (gitignored) and fill in real values.
+# SECURITY_KEY/SECURITY_SECRET are the WSSE credentials NanoServer expects for
+# webServices/* endpoints (Login, Users, Devices) — see CLAUDE.md.
+SECURITY_KEY=
+SECURITY_SECRET=
+
+# URL hosting the Vosk Spanish model archive, downloaded on first use of the
+# wake-word feature (never bundled in the repo/APK) — see CLAUDE.md.
+VOSK_MODEL_URL=

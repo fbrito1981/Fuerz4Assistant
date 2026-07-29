@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Fuerz4 Assistant</string>
+
+    <!-- Navegación -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_profile">Perfil</string>
+    <string name="nav_devices">Dispositivos</string>
+
+    <!-- Común -->
+    <string name="common_loading">Cargando…</string>
+    <string name="common_retry">Reintentar</string>
+    <string name="common_cancel">Cancelar</string>
+    <string name="common_accept">Aceptar</string>
+    <string name="common_save">Guardar</string>
+    <string name="common_delete">Eliminar</string>
+    <string name="common_edit">Editar</string>
+    <string name="common_error_general">Ocurrió un error. Intentá nuevamente.</string>
+    <string name="common_offline_message">No hay conexión a internet. Algunas funciones no están disponibles.</string>
+    <string name="common_back">Volver</string>
+    <string name="common_continue">Continuar</string>
+    <string name="common_optional">Opcional</string>
+
+    <!-- Errores del servidor -->
+    <string name="error_unauthorized">No se pudo autenticar la aplicación con el servidor.</string>
+    <string name="error_invalid_credentials">Email o contraseña incorrectos.</string>
+    <string name="error_inactive_user">Tu cuenta está inactiva. Contactá al soporte.</string>
+    <string name="error_invalid_recovery_code">El código ingresado no es válido.</string>
+    <string name="error_expired_recovery_code">El código ingresado venció. Solicitá uno nuevo.</string>
+    <string name="error_invalid_user">No se encontró el usuario.</string>
+    <string name="error_invalid_device">El dispositivo no es válido o no te pertenece.</string>
+    <string name="error_invalid_params">Los datos ingresados no son válidos.</string>
+    <string name="error_duplicate_device">Ya existe un dispositivo con ese identificador.</string>
+
+    <!-- Login -->
+    <string name="login_title">Fuerz4 Assistant</string>
+    <string name="login_email_label">Email</string>
+    <string name="login_password_label">Contraseña</string>
+    <string name="login_submit">Ingresar</string>
+    <string name="login_register_prompt">¿No tenés una cuenta? Registrate</string>
+    <string name="login_forgot_password_prompt">Olvidé mi contraseña</string>
+    <string name="login_validation_error">Completá tu email y contraseña.</string>
+
+    <!-- Registro -->
+    <string name="register_title">Crear cuenta</string>
+    <string name="register_name_label">Nombre</string>
+    <string name="register_email_label">Email</string>
+    <string name="register_submit">Registrarme</string>
+    <string name="register_validation_error">Completá tu nombre y email.</string>
+    <string name="register_success_message">Te enviamos una contraseña por email. Ya podés iniciar sesión.</string>
+
+    <!-- Recuperar contraseña -->
+    <string name="forgot_title">Recuperar contraseña</string>
+    <string name="forgot_step_request_title">Ingresá tu email para recibir un código</string>
+    <string name="forgot_step_validate_title">Ingresá el código que te enviamos</string>
+    <string name="forgot_step_reset_title">Elegí tu nueva contraseña</string>
+    <string name="forgot_code_label">Código</string>
+    <string name="forgot_new_password_label">Nueva contraseña</string>
+    <string name="forgot_send_code">Enviar código</string>
+    <string name="forgot_validate_code">Validar código</string>
+    <string name="forgot_reset_password">Cambiar contraseña</string>
+    <string name="forgot_validation_error">Completá todos los campos.</string>
+
+    <!-- Perfil -->
+    <string name="profile_title">Perfil</string>
+    <string name="profile_name_label">Nombre</string>
+    <string name="profile_email_label">Email</string>
+    <string name="profile_save_success">Perfil actualizado.</string>
+    <string name="profile_logout">Cerrar sesión</string>
+
+    <!-- Dispositivos -->
+    <string name="devices_title">Dispositivos</string>
+    <string name="devices_empty">Todavía no agregaste ningún dispositivo.</string>
+    <string name="devices_add">Agregar dispositivo</string>
+    <string name="devices_load_error">No se pudieron cargar los dispositivos.</string>
+    <string name="devices_delete_confirm_title">Eliminar dispositivo</string>
+    <string name="devices_delete_confirm_message">¿Seguro que querés eliminar \"%1$s\"?</string>
+
+    <string name="device_type_picker_title">¿Qué tipo de dispositivo vas a agregar?</string>
+    <string name="device_type_energy">Energía</string>
+    <string name="device_type_energy_description">Mide voltaje y corriente</string>
+    <string name="device_type_environment">Ambiente</string>
+    <string name="device_type_environment_description">Mide temperatura y humedad</string>
+
+    <string name="device_form_title">Nuevo dispositivo</string>
+    <string name="device_form_name_label">Nombre del dispositivo</string>
+    <string name="device_form_wifi_section">Red WiFi del hogar</string>
+    <string name="device_form_wifi_ssid_label">Nombre de red (SSID)</string>
+    <string name="device_form_wifi_password_label">Contraseña de red</string>
+    <string name="device_form_optional_section">Ajustes opcionales</string>
+    <string name="device_form_volts_label">Voltaje (V)</string>
+    <string name="device_form_amps_label">Corriente (A)</string>
+    <string name="device_form_temp_label">Temperatura (°C)</string>
+    <string name="device_form_hum_label">Humedad (%%)</string>
+    <string name="device_form_submit">Provisionar dispositivo</string>
+    <string name="device_form_validation_error">Completá el nombre y la red WiFi del hogar.</string>
+    <string name="device_form_offline_required">Necesitás conexión WiFi para agregar un dispositivo.</string>
+    <string name="device_form_error_ap_connect">No se pudo conectar a la red del dispositivo (nUdpWiFi). Verificá que esté encendido y en modo de configuración.</string>
+    <string name="device_form_error_udp">No se pudo enviar la configuración al dispositivo. Intentá nuevamente.</string>
+    <string name="device_form_step_connecting">Conectando a la red del dispositivo…</string>
+    <string name="device_form_step_sending">Enviando configuración…</string>
+    <string name="device_form_step_restoring">Restaurando tu red WiFi…</string>
+    <string name="device_form_step_registering">Registrando dispositivo…</string>
+    <string name="device_form_success">Dispositivo agregado correctamente.</string>
+
+    <!-- Chat -->
+    <string name="chat_title">Fuerz4 Assistant</string>
+    <string name="chat_input_placeholder">Escribí tu mensaje…</string>
+    <string name="chat_send">Enviar</string>
+    <string name="chat_clear">Limpiar conversación</string>
+    <string name="chat_empty_state">Escribí o hablá para empezar a chatear con el asistente.</string>
+    <string name="chat_error_sending">No se pudo enviar el mensaje. Intentá nuevamente.</string>
+    <string name="chat_mic_button">Hablar</string>
+    <string name="chat_listening">Escuchando…</string>
+    <string name="chat_speech_not_available">El reconocimiento de voz no está disponible en este dispositivo.</string>
+    <string name="chat_speech_error">No se entendió el audio. Intentá de nuevo.</string>
+    <string name="chat_wake_word_toggle">Activar palabra de despertar (\"Che fuerza\")</string>
+    <string name="chat_wake_word_downloading">Descargando el modelo de voz para la palabra de despertar…</string>
+    <string name="chat_wake_word_download_error">No se pudo descargar el modelo de voz.</string>
+
+    <!-- Notificación de palabra de despertar -->
+    <string name="wake_word_notification_channel">Palabra de despertar</string>
+    <string name="wake_word_notification_title">Fuerz4 Assistant escuchando</string>
+    <string name="wake_word_notification_text">Decí \"Che fuerza\" para hablar con el asistente.</string>
+</resources>
