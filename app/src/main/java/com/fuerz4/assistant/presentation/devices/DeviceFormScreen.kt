@@ -159,14 +159,17 @@ private fun DeviceFormContent(uiState: DeviceFormUiState, viewModel: DeviceFormV
             )
         }
 
-        if (uiState.isEditMode) {
-            Text(
-                stringResource(R.string.device_form_edit_reconfigure_hint),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 8.dp)
-            )
+        val reconfigureHintRes = if (uiState.isEditMode) {
+            R.string.device_form_edit_reconfigure_hint
+        } else {
+            R.string.device_form_create_reconfigure_hint
         }
+        Text(
+            stringResource(reconfigureHintRes),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 8.dp)
+        )
 
         uiState.validationError?.let { error ->
             Text(

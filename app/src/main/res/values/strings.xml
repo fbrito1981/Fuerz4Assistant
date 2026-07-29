@@ -95,10 +95,11 @@
     <string name="device_form_amps_label">Corriente (A)</string>
     <string name="device_form_temp_label">Temperatura (°C)</string>
     <string name="device_form_hum_label">Humedad (%)</string>
-    <string name="device_form_submit">Provisionar dispositivo</string>
+    <string name="device_form_submit">Agregar</string>
     <string name="device_form_validation_error">Completá el nombre y la red WiFi del hogar.</string>
     <string name="device_form_wifi_required_for_settings">Para modificar los ajustes también tenés que ingresar la red WiFi del hogar.</string>
     <string name="device_form_edit_reconfigure_hint">Para modificar Red WiFi y/o Ajustes recordá presionar por más de 2 segundos el botón del dispositivo, antes de presionar "Guardar".</string>
+    <string name="device_form_create_reconfigure_hint">Recordá presionar por más de 2 segundos el botón del dispositivo, antes de presionar el Agregar.</string>
     <string name="device_form_offline_required">Necesitás conexión WiFi para agregar un dispositivo.</string>
     <string name="device_form_load_error">No se pudo cargar la información del dispositivo.</string>
     <string name="device_form_error_ap_connect">No se pudo conectar a la red del dispositivo (nUdpWiFi). Verificá que esté encendido y en modo de configuración.</string>
