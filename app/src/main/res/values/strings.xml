@@ -20,6 +20,8 @@
     <string name="common_back">Volver</string>
     <string name="common_continue">Continuar</string>
     <string name="common_optional">Opcional</string>
+    <string name="common_show_password">Mostrar contraseña</string>
+    <string name="common_hide_password">Ocultar contraseña</string>
 
     <!-- Errores del servidor -->
     <string name="error_unauthorized">No se pudo autenticar la aplicación con el servidor.</string>
@@ -83,6 +85,7 @@
     <string name="device_type_environment_description">Mide temperatura y humedad</string>
 
     <string name="device_form_title">Nuevo dispositivo</string>
+    <string name="device_form_edit_title">Editar dispositivo</string>
     <string name="device_form_name_label">Nombre del dispositivo</string>
     <string name="device_form_wifi_section">Red WiFi del hogar</string>
     <string name="device_form_wifi_ssid_label">Nombre de red (SSID)</string>
@@ -91,10 +94,13 @@
     <string name="device_form_volts_label">Voltaje (V)</string>
     <string name="device_form_amps_label">Corriente (A)</string>
     <string name="device_form_temp_label">Temperatura (°C)</string>
-    <string name="device_form_hum_label">Humedad (%%)</string>
+    <string name="device_form_hum_label">Humedad (%)</string>
     <string name="device_form_submit">Provisionar dispositivo</string>
     <string name="device_form_validation_error">Completá el nombre y la red WiFi del hogar.</string>
+    <string name="device_form_wifi_required_for_settings">Para modificar los ajustes también tenés que ingresar la red WiFi del hogar.</string>
+    <string name="device_form_edit_reconfigure_hint">Para modificar Red WiFi y/o Ajustes recordá presionar por más de 2 segundos el botón del dispositivo, antes de presionar "Guardar".</string>
     <string name="device_form_offline_required">Necesitás conexión WiFi para agregar un dispositivo.</string>
+    <string name="device_form_load_error">No se pudo cargar la información del dispositivo.</string>
     <string name="device_form_error_ap_connect">No se pudo conectar a la red del dispositivo (nUdpWiFi). Verificá que esté encendido y en modo de configuración.</string>
     <string name="device_form_error_udp">No se pudo enviar la configuración al dispositivo. Intentá nuevamente.</string>
     <string name="device_form_step_connecting">Conectando a la red del dispositivo…</string>
@@ -114,7 +120,8 @@
     <string name="chat_listening">Escuchando…</string>
     <string name="chat_speech_not_available">El reconocimiento de voz no está disponible en este dispositivo.</string>
     <string name="chat_speech_error">No se entendió el audio. Intentá de nuevo.</string>
-    <string name="chat_wake_word_toggle">Activar palabra de despertar (\"Che fuerza\")</string>
+    <string name="chat_wake_word_toggle">Palabra clave</string>
+    <string name="chat_wake_word_description">Decí \"Che fuerza\" para que el asistente empiece a escucharte, sin tocar el micrófono.</string>
     <string name="chat_wake_word_downloading">Descargando el modelo de voz para la palabra de despertar…</string>
     <string name="chat_wake_word_download_error">No se pudo descargar el modelo de voz.</string>
 

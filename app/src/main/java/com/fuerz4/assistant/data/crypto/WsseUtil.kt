@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat
 import java.util.Base64
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 /**
  * Kotlin port of NanoServer's `WSSecurityUtils.java` (and tsm_android's `WSSecurityUtil.kt`).
@@ -34,7 +35,12 @@ object WsseUtil {
     fun getAuthorizationHeader(customerToken: String, secretToken: String, now: Date = Date()): String {
         val randomBytes = SecureUtil.getCode().toString().toByteArray(Charsets.UTF_8)
         val nonceEncoded = Base64.getEncoder().encodeToString(randomBytes)
-        val created = SimpleDateFormat(DATE_FORMAT, Locale.US).format(now)
+        // The 'Z' in DATE_FORMAT is a literal char, not a real offset directive — SimpleDateFormat
+        // renders in the JVM/device's default timezone unless told otherwise, so without this the
+        // server (which parses assuming true UTC) sees a bogus offset and rejects the nonce as
+        // stale for any device outside UTC. See CLAUDE.md.
+        val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.US).apply { timeZone = TimeZone.getTimeZone("UTC") }
+        val created = dateFormat.format(now)
         val passwordDigest = generatePasswordDigest(
             randomBytes,
             created.toByteArray(Charsets.UTF_8),

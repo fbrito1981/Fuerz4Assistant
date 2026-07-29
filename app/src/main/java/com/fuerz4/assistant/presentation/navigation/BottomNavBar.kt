@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Router
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,13 +17,15 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.fuerz4.assistant.R
+import com.fuerz4.assistant.presentation.theme.NaranjaClaro
+import com.fuerz4.assistant.presentation.theme.NaranjaIndicador
 
 @Composable
 fun Fuerz4BottomNavBar(navController: NavHostController) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination
 
-    NavigationBar {
+    NavigationBar(containerColor = NaranjaClaro) {
         bottomNavDestinations.forEach { destination ->
             val selected = currentRoute?.hierarchy?.any { it.route == destination.route } == true
 
@@ -40,7 +43,8 @@ fun Fuerz4BottomNavBar(navController: NavHostController) {
                     }
                 },
                 icon = { Icon(destination.icon(), contentDescription = null) },
-                label = { Text(stringResource(destination.labelRes())) }
+                label = { Text(stringResource(destination.labelRes())) },
+                colors = NavigationBarItemDefaults.colors(indicatorColor = NaranjaIndicador)
             )
         }
     }

@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat
 import java.util.Base64
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 class WsseUtilTest {
 
@@ -50,13 +51,36 @@ class WsseUtilTest {
     }
 
     @Test
-    fun `created field is formatted as an ISO-8601 UTC instant`() {
+    fun `created field is always rendered in UTC regardless of the device's default timezone`() {
+        // Fixed instant with a known UTC wall-clock time, verified against a UTC-anchored
+        // formatter — this must hold no matter what timezone the JVM/device defaults to,
+        // otherwise the server rejects the nonce as stale for any non-UTC client.
         val fixedDate = Date(1_700_000_000_000L)
-        val expected = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).format(fixedDate)
+        val expectedUtcFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+        val expected = expectedUtcFormat.format(fixedDate)
+        assertEquals("2023-11-14T22:13:20Z", expected)
 
         val header = WsseUtil.getAuthorizationHeader("key", "secret", fixedDate)
         val match = headerRegex.matchEntire(header)!!
 
         assertEquals(expected, match.groupValues[4])
+    }
+
+    @Test
+    fun `created field does not shift when the default timezone is not UTC`() {
+        val originalDefault = TimeZone.getDefault()
+        try {
+            TimeZone.setDefault(TimeZone.getTimeZone("America/Argentina/Buenos_Aires"))
+            val fixedDate = Date(1_700_000_000_000L)
+
+            val header = WsseUtil.getAuthorizationHeader("key", "secret", fixedDate)
+            val match = headerRegex.matchEntire(header)!!
+
+            assertEquals("2023-11-14T22:13:20Z", match.groupValues[4])
+        } finally {
+            TimeZone.setDefault(originalDefault)
+        }
     }
 }

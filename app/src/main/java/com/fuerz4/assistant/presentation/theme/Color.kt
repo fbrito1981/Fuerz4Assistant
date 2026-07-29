@@ -8,3 +8,5 @@ val Blanco = Color(0xFFFCFCFC)
 
 val NaranjaOscuroContainer = Color(0xFF8F3B14)
 val GrisOscuroVariant = Color(0xFF262D36)
+val NaranjaClaro = Color(0xFFF2E2DA)
+val NaranjaIndicador = Color(0xFFE7C4B4)

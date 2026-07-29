@@ -5,6 +5,12 @@ enum class DeviceType(val prefix: String) {
     ENERGY("WFEM"),
     ENVIRONMENT("WFTM");
 
+    val wireValue: String
+        get() = when (this) {
+            ENERGY -> "energy"
+            ENVIRONMENT -> "environment"
+        }
+
     companion object {
         fun fromWireValue(value: String?): DeviceType? = when (value) {
             "energy" -> ENERGY

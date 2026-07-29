@@ -42,22 +42,37 @@ fun DeviceFormScreen(
         }
     }
 
-    when (val step = uiState.step) {
-        is ProvisioningStep.Form -> DeviceFormContent(uiState, viewModel)
-        is ProvisioningStep.Error -> {
+    when {
+        uiState.isLoadingExisting -> ProvisioningProgress(ProvisioningStep.Form)
+        uiState.loadError != null -> {
             Column(
                 modifier = Modifier.fillMaxSize().padding(24.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(step.message.asString(), color = MaterialTheme.colorScheme.error)
-                Button(onClick = viewModel::startProvisioning, modifier = Modifier.padding(top = 16.dp)) {
+                Text(uiState.loadError!!.asString(), color = MaterialTheme.colorScheme.error)
+                Button(onClick = viewModel::retryLoad, modifier = Modifier.padding(top = 16.dp)) {
                     Text(stringResource(R.string.common_retry))
                 }
             }
         }
-        is ProvisioningStep.Success -> Unit // handled by LaunchedEffect above
-        else -> ProvisioningProgress(step)
+        else -> when (val step = uiState.step) {
+            is ProvisioningStep.Form -> DeviceFormContent(uiState, viewModel)
+            is ProvisioningStep.Error -> {
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(24.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(step.message.asString(), color = MaterialTheme.colorScheme.error)
+                    Button(onClick = viewModel::submit, modifier = Modifier.padding(top = 16.dp)) {
+                        Text(stringResource(R.string.common_retry))
+                    }
+                }
+            }
+            is ProvisioningStep.Success -> Unit // handled by LaunchedEffect above
+            else -> ProvisioningProgress(step)
+        }
     }
 }
 
@@ -69,7 +84,8 @@ private fun DeviceFormContent(uiState: DeviceFormUiState, viewModel: DeviceFormV
             .verticalScroll(rememberScrollState())
             .padding(24.dp)
     ) {
-        Text(stringResource(R.string.device_form_title), style = MaterialTheme.typography.titleLarge)
+        val titleRes = if (uiState.isEditMode) R.string.device_form_edit_title else R.string.device_form_title
+        Text(stringResource(titleRes), style = MaterialTheme.typography.titleLarge)
 
         OutlinedTextField(
             value = uiState.name,
@@ -143,6 +159,15 @@ private fun DeviceFormContent(uiState: DeviceFormUiState, viewModel: DeviceFormV
             )
         }
 
+        if (uiState.isEditMode) {
+            Text(
+                stringResource(R.string.device_form_edit_reconfigure_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+
         uiState.validationError?.let { error ->
             Text(
                 text = error.asString(),
@@ -152,10 +177,11 @@ private fun DeviceFormContent(uiState: DeviceFormUiState, viewModel: DeviceFormV
         }
 
         Button(
-            onClick = viewModel::startProvisioning,
+            onClick = viewModel::submit,
             modifier = Modifier.fillMaxWidth().padding(top = 24.dp)
         ) {
-            Text(stringResource(R.string.device_form_submit))
+            val submitLabelRes = if (uiState.isEditMode) R.string.common_save else R.string.device_form_submit
+            Text(stringResource(submitLabelRes))
         }
     }
 }

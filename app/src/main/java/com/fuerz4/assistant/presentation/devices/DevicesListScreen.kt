@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -34,10 +35,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fuerz4.assistant.R
 import com.fuerz4.assistant.domain.model.Device
+import com.fuerz4.assistant.presentation.theme.NaranjaClaro
 
 @Composable
 fun DevicesListScreen(
     onAddDevice: () -> Unit,
+    onEditDevice: (Device) -> Unit,
     viewModel: DevicesListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -69,7 +72,11 @@ fun DevicesListScreen(
                 }
                 else -> LazyColumn {
                     items(uiState.devices, key = { it.uuid }) { device ->
-                        DeviceRow(device = device, onDelete = { deviceToDelete = device })
+                        DeviceRow(
+                            device = device,
+                            onClick = { onEditDevice(device) },
+                            onDelete = { deviceToDelete = device }
+                        )
                     }
                 }
             }
@@ -99,8 +106,12 @@ fun DevicesListScreen(
 }
 
 @Composable
-private fun DeviceRow(device: Device, onDelete: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+private fun DeviceRow(device: Device, onClick: () -> Unit, onDelete: () -> Unit) {
+    Card(
+        onClick = onClick,
+        colors = CardDefaults.cardColors(containerColor = NaranjaClaro),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)
+    ) {
         Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Column {
                 Text(device.name, style = MaterialTheme.typography.titleLarge)

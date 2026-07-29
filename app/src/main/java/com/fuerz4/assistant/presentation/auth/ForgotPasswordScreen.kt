@@ -17,11 +17,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fuerz4.assistant.R
+import com.fuerz4.assistant.presentation.common.PasswordTextField
 
 @Composable
 fun ForgotPasswordScreen(
@@ -90,13 +90,10 @@ fun ForgotPasswordScreen(
                     stringResource(R.string.forgot_step_reset_title),
                     modifier = Modifier.padding(top = 16.dp)
                 )
-                OutlinedTextField(
+                PasswordTextField(
                     value = uiState.newPassword,
                     onValueChange = viewModel::onNewPasswordChange,
-                    label = { Text(stringResource(R.string.forgot_new_password_label)) },
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    singleLine = true,
+                    label = stringResource(R.string.forgot_new_password_label),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp)
