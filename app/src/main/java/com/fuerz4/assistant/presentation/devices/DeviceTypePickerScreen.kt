@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +40,7 @@ private fun DeviceTypeCard(title: String, description: String, onClick: () -> Un
     Card(
         onClick = onClick,
         colors = CardDefaults.cardColors(containerColor = NaranjaClaro),
+        shape = RoundedCornerShape(50),
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp)
