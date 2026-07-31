@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -50,6 +51,7 @@ fun ForgotPasswordScreen(
                     label = { Text(stringResource(R.string.login_email_label)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     singleLine = true,
+                    shape = RoundedCornerShape(50),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp)
@@ -64,8 +66,13 @@ fun ForgotPasswordScreen(
 
             ForgotPasswordStep.VALIDATE_CODE -> {
                 Text(
-                    stringResource(R.string.forgot_step_validate_title),
+                    stringResource(R.string.forgot_step_validate_sent_message),
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(top = 16.dp)
+                )
+                Text(
+                    stringResource(R.string.forgot_step_validate_title),
+                    modifier = Modifier.padding(top = 8.dp)
                 )
                 OutlinedTextField(
                     value = uiState.code,
@@ -73,6 +80,7 @@ fun ForgotPasswordScreen(
                     label = { Text(stringResource(R.string.forgot_code_label)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
+                    shape = RoundedCornerShape(50),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp)
@@ -102,13 +110,33 @@ fun ForgotPasswordScreen(
                 LoadingButton(
                     text = stringResource(R.string.forgot_reset_password),
                     isLoading = uiState.isLoading,
-                    onClick = { viewModel.resetPassword(onResetSuccess) }
+                    onClick = viewModel::resetPassword
                 )
+            }
+
+            ForgotPasswordStep.DONE -> {
+                Text(
+                    stringResource(R.string.forgot_step_done_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+                Text(
+                    stringResource(R.string.forgot_step_done_message),
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+                Button(
+                    onClick = onResetSuccess,
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                ) {
+                    Text(stringResource(R.string.forgot_done_go_to_login))
+                }
             }
         }
 
-        TextButton(onClick = onNavigateBack, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.common_back))
+        if (uiState.step != ForgotPasswordStep.DONE) {
+            TextButton(onClick = onNavigateBack, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.common_back))
+            }
         }
     }
 }

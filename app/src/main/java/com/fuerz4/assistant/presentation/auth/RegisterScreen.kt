@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -42,6 +43,7 @@ fun RegisterScreen(
             onValueChange = viewModel::onNameChange,
             label = { Text(stringResource(R.string.register_name_label)) },
             singleLine = true,
+            shape = RoundedCornerShape(50),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 24.dp)
@@ -53,6 +55,7 @@ fun RegisterScreen(
             label = { Text(stringResource(R.string.register_email_label)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             singleLine = true,
+            shape = RoundedCornerShape(50),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)

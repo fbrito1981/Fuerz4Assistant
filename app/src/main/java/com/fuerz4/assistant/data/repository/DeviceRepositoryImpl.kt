@@ -5,9 +5,11 @@ import com.fuerz4.assistant.data.remote.NanoApiError
 import com.fuerz4.assistant.data.remote.dto.DeviceDto
 import com.fuerz4.assistant.data.remote.dto.DeviceListRequestDto
 import com.fuerz4.assistant.data.remote.dto.DeviceRemoveRequestDto
+import com.fuerz4.assistant.data.remote.dto.DeviceSettingsDto
 import com.fuerz4.assistant.data.remote.safeApiCallBody
 import com.fuerz4.assistant.data.session.SessionManager
 import com.fuerz4.assistant.domain.model.Device
+import com.fuerz4.assistant.domain.model.DeviceSettings
 import com.fuerz4.assistant.domain.model.DeviceType
 import com.fuerz4.assistant.domain.repository.DeviceRepository
 import javax.inject.Inject
@@ -27,18 +29,18 @@ class DeviceRepositoryImpl @Inject constructor(
             .map { result -> result.data?.devices.orEmpty().map { dto -> dto.toDomain() } }
     }
 
-    override suspend fun createDevice(uuid: String, name: String, model: String?): Result<Device> {
+    override suspend fun createDevice(uuid: String, name: String, model: String?, settings: DeviceSettings?): Result<Device> {
         val token = token() ?: return Result.failure(NanoApiError.Unknown())
-        val dto = DeviceDto(uuid = uuid, name = name, model = model)
+        val dto = DeviceDto(uuid = uuid, name = name, model = model, settings = settings?.toDto())
 
         return safeApiCallBody { api.createDevice(token, dto) }.mapCatching { result ->
             (result.data ?: throw NanoApiError.Unknown()).toDomain()
         }
     }
 
-    override suspend fun updateDevice(uuid: String, name: String, active: Boolean?): Result<Device> {
+    override suspend fun updateDevice(uuid: String, name: String, active: Boolean?, settings: DeviceSettings?): Result<Device> {
         val token = token() ?: return Result.failure(NanoApiError.Unknown())
-        val dto = DeviceDto(uuid = uuid, name = name, active = active)
+        val dto = DeviceDto(uuid = uuid, name = name, active = active, settings = settings?.toDto())
 
         return safeApiCallBody { api.updateDevice(token, dto) }.mapCatching { result ->
             (result.data ?: throw NanoApiError.Unknown()).toDomain()
@@ -61,6 +63,11 @@ class DeviceRepositoryImpl @Inject constructor(
         version = version,
         type = DeviceType.fromWireValue(type) ?: DeviceType.fromUuid(uuid),
         active = active,
+        settings = settings?.toDomain(),
         created = created
     )
+
+    private fun DeviceSettings.toDto() = DeviceSettingsDto(ssid = ssid, volts = volts, amps = amps, temp = temp, hum = hum)
+
+    private fun DeviceSettingsDto.toDomain() = DeviceSettings(ssid = ssid, volts = volts, amps = amps, temp = temp, hum = hum)
 }

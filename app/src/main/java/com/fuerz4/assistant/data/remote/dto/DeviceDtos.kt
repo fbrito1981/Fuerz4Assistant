@@ -11,8 +11,23 @@ data class DeviceDto(
     val version: String? = null,
     val type: String? = null,
     val active: Boolean? = null,
+    val settings: DeviceSettingsDto? = null,
     /** Epoch millis — the server's `Device.created` is a `java.util.Date`, and Jackson's default (un-annotated) serialization for that is a numeric timestamp, not an ISO string. */
     val created: Long? = null
+)
+
+/**
+ * Provisioned home-WiFi + sensor settings, stored server-side as one JSON field on `Device`
+ * (see NanoServer's `Device.settings`/`DeviceSettingsDto`). Energía devices use [volts]/[amps],
+ * Ambiente devices use [temp]/[hum]; [ssid] applies to both.
+ */
+@Serializable
+data class DeviceSettingsDto(
+    val ssid: String? = null,
+    val volts: Double? = null,
+    val amps: Double? = null,
+    val temp: Double? = null,
+    val hum: Double? = null
 )
 
 @Serializable

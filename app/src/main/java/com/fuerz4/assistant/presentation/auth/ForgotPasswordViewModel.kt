@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class ForgotPasswordStep { REQUEST_CODE, VALIDATE_CODE, RESET_PASSWORD }
+enum class ForgotPasswordStep { REQUEST_CODE, VALIDATE_CODE, RESET_PASSWORD, DONE }
 
 data class ForgotPasswordUiState(
     val step: ForgotPasswordStep = ForgotPasswordStep.REQUEST_CODE,
@@ -65,7 +65,7 @@ class ForgotPasswordViewModel @Inject constructor(
         }
     }
 
-    fun resetPassword(onSuccess: () -> Unit) {
+    fun resetPassword() {
         val state = _uiState.value
         if (state.newPassword.isBlank()) {
             _uiState.update { it.copy(error = UiText.Resource(R.string.forgot_validation_error)) }
@@ -73,7 +73,7 @@ class ForgotPasswordViewModel @Inject constructor(
         }
         runGuarded {
             authRepository.resetPassword(state.email.trim(), state.newPassword)
-                .onSuccess { onSuccess() }
+                .onSuccessUpdate { it.copy(step = ForgotPasswordStep.DONE) }
         }
     }
 

@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.DeleteSweep
@@ -28,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -42,11 +44,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fuerz4.assistant.R
 import com.fuerz4.assistant.presentation.common.OfflineBanner
+import com.fuerz4.assistant.presentation.theme.NaranjaIndicador
+import com.fuerz4.assistant.presentation.theme.NaranjaOscuro
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -160,7 +166,15 @@ fun ChatScreen(viewModel: ChatViewModel = hiltViewModel()) {
                     onValueChange = { inputText = it },
                     placeholder = { Text(stringResource(R.string.chat_input_placeholder)) },
                     shape = RoundedCornerShape(50),
-                    singleLine = true,
+                    // Multi-line so the keyboard's enter key inserts a line break to help the
+                    // user format longer messages, instead of being swallowed by a single-line
+                    // field or wired to send — sending stays exclusive to the send button below.
+                    singleLine = false,
+                    maxLines = 5,
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = ImeAction.Default
+                    ),
                     modifier = Modifier.weight(1f)
                 )
 
@@ -203,7 +217,13 @@ fun ChatScreen(viewModel: ChatViewModel = hiltViewModel()) {
                         } else {
                             viewModel.setWakeWordEnabled(false)
                         }
-                    }
+                    },
+                    colors = SwitchDefaults.colors(
+                        checkedTrackColor = NaranjaOscuro,
+                        checkedBorderColor = NaranjaOscuro,
+                        uncheckedTrackColor = NaranjaIndicador,
+                        uncheckedBorderColor = NaranjaOscuro
+                    )
                 )
 
                 Column(modifier = Modifier.padding(start = 8.dp)) {

@@ -10,20 +10,25 @@ import com.fuerz4.assistant.data.provisioning.DeviceIdGenerator
 import com.fuerz4.assistant.data.provisioning.ProvisioningResult
 import com.fuerz4.assistant.data.provisioning.UdpProvisioningClient
 import com.fuerz4.assistant.data.provisioning.WifiConnectResult
+import com.fuerz4.assistant.data.provisioning.WifiNetworkScanner
 import com.fuerz4.assistant.data.provisioning.WifiProvisioningManager
 import com.fuerz4.assistant.data.remote.NanoApiError
+import com.fuerz4.assistant.domain.model.DeviceSettings
 import com.fuerz4.assistant.domain.model.DeviceType
 import com.fuerz4.assistant.domain.repository.DeviceRepository
 import com.fuerz4.assistant.presentation.common.UiText
 import com.fuerz4.assistant.presentation.common.toUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+private const val WIFI_SCAN_SETTLE_DELAY_MS = 1_500L
 
 private const val DEVICE_AP_SSID = "nUdpWiFi"
 private const val DEVICE_AP_PASSWORD = "\$n=f16e7r81"
@@ -50,6 +55,7 @@ data class DeviceFormUiState(
     val isEditMode: Boolean = false,
     val isLoadingExisting: Boolean = false,
     val loadError: UiText? = null,
+    val availableSsids: List<String> = emptyList(),
     val step: ProvisioningStep = ProvisioningStep.Form,
     val validationError: UiText? = null
 )
@@ -62,7 +68,8 @@ class DeviceFormViewModel @Inject constructor(
     private val wifiProvisioningManager: WifiProvisioningManager,
     private val udpProvisioningClient: UdpProvisioningClient,
     private val deviceIdGenerator: DeviceIdGenerator,
-    private val deviceRepository: DeviceRepository
+    private val deviceRepository: DeviceRepository,
+    private val wifiNetworkScanner: WifiNetworkScanner
 ) : ViewModel() {
 
     private val initialType = DeviceType.fromWireValue(savedStateHandle.get<String>("deviceType")) ?: DeviceType.ENERGY
@@ -94,10 +101,16 @@ class DeviceFormViewModel @Inject constructor(
                         return@onSuccess
                     }
                     originalName = device.name
+                    val settings = device.settings
                     _uiState.update {
                         it.copy(
                             type = device.type ?: it.type,
                             name = device.name,
+                            homeSsid = settings?.ssid.orEmpty(),
+                            volts = settings?.volts?.toString().orEmpty(),
+                            amps = settings?.amps?.toString().orEmpty(),
+                            temp = settings?.temp?.toString().orEmpty(),
+                            hum = settings?.hum?.toString().orEmpty(),
                             isLoadingExisting = false
                         )
                     }
@@ -114,6 +127,15 @@ class DeviceFormViewModel @Inject constructor(
         val uuid = existingUuid ?: return
         _uiState.update { it.copy(isLoadingExisting = true, loadError = null) }
         loadExistingDevice(uuid)
+    }
+
+    fun refreshWifiNetworks() {
+        _uiState.update { it.copy(availableSsids = wifiNetworkScanner.cachedSsids()) }
+        viewModelScope.launch {
+            wifiNetworkScanner.requestScan()
+            delay(WIFI_SCAN_SETTLE_DELAY_MS)
+            _uiState.update { it.copy(availableSsids = wifiNetworkScanner.cachedSsids()) }
+        }
     }
 
     fun onNameChange(value: String) = _uiState.update { it.copy(name = value, validationError = null) }
@@ -247,18 +269,28 @@ class DeviceFormViewModel @Inject constructor(
 
             _uiState.update { it.copy(step = ProvisioningStep.RegisteringDevice) }
 
+            val settings = DeviceSettings(
+                ssid = state.homeSsid.trim(),
+                volts = if (state.type == DeviceType.ENERGY) state.volts.toDoubleOrNull() else null,
+                amps = if (state.type == DeviceType.ENERGY) state.amps.toDoubleOrNull() else null,
+                temp = if (state.type == DeviceType.ENVIRONMENT) state.temp.toDoubleOrNull() else null,
+                hum = if (state.type == DeviceType.ENVIRONMENT) state.hum.toDoubleOrNull() else null
+            )
+
             val registerResult = if (isNewDevice) {
                 val modelLabelRes = if (state.type == DeviceType.ENERGY) {
                     R.string.device_type_energy
                 } else {
                     R.string.device_type_environment
                 }
-                deviceRepository.createDevice(uuid = dbUuid, name = state.name.trim(), model = context.getString(modelLabelRes))
-                    .map { }
-            } else if (state.name.trim() != originalName.trim()) {
-                deviceRepository.updateDevice(uuid = dbUuid, name = state.name.trim(), active = null).map { }
+                deviceRepository.createDevice(
+                    uuid = dbUuid,
+                    name = state.name.trim(),
+                    model = context.getString(modelLabelRes),
+                    settings = settings
+                ).map { }
             } else {
-                Result.success(Unit)
+                deviceRepository.updateDevice(uuid = dbUuid, name = state.name.trim(), active = null, settings = settings).map { }
             }
 
             registerResult

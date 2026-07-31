@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -110,6 +111,7 @@ private fun DeviceRow(device: Device, onClick: () -> Unit, onDelete: () -> Unit)
     Card(
         onClick = onClick,
         colors = CardDefaults.cardColors(containerColor = NaranjaClaro),
+        shape = RoundedCornerShape(50),
         modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)
     ) {
         Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {

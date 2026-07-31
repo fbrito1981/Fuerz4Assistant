@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +41,7 @@ fun ProfileScreen(
             label = { Text(stringResource(R.string.profile_email_label)) },
             enabled = false,
             singleLine = true,
+            shape = RoundedCornerShape(50),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 24.dp)
@@ -50,6 +52,7 @@ fun ProfileScreen(
             onValueChange = viewModel::onNameChange,
             label = { Text(stringResource(R.string.profile_name_label)) },
             singleLine = true,
+            shape = RoundedCornerShape(50),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
