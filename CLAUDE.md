@@ -8,10 +8,14 @@ wake word) for managing IoT devices ("Energía"/"Ambiente" sensors) that report 
 
 - Kotlin, Jetpack Compose (Material 3), MVVM + light Clean Architecture (`data` / `domain` / `presentation`)
 - Hilt (DI), Retrofit + OkHttp + kotlinx.serialization, StateFlow/SharedFlow, coroutines
-- minSdk 30, targetSdk 34, compileSdk 34
-- Gradle 8.7, AGP 8.5.2, Kotlin 2.0.21 (Compose compiler plugin) — **requires JDK 17** to run Gradle
-  itself (this machine's default JDKs are 8/11; a local JDK 17 was used to build/validate — point
-  `org.gradle.java.home` or `JAVA_HOME` at a JDK 17 install before building)
+- minSdk 30, targetSdk 34, compileSdk 35 (bumped from 34 solely to satisfy Vico's transitive
+  `androidx.core` AAR metadata requirement — see "Device detail & history" below; targetSdk/minSdk
+  are unchanged, so this has no runtime behavior impact, just a compile-time API surface bump)
+- Gradle 8.7, AGP 8.5.2 (older than the AGP versions Google lists as tested against compileSdk 35,
+  so a `WARNING: We recommend using a newer Android Gradle plugin` is expected/benign on every
+  build until AGP is upgraded), Kotlin 2.0.21 (Compose compiler plugin) — **requires JDK 17** to
+  run Gradle itself (this machine's default JDKs are 8/11; a local JDK 17 was used to build/
+  validate — point `org.gradle.java.home` or `JAVA_HOME` at a JDK 17 install before building)
 
 ## Backend dependency: NanoServer
 
@@ -56,11 +60,12 @@ copy. Extend that `when` if the backend adds new codes.
 | `/users/registration` | WSSE | `encryptedData` + `images` |
 | `/users/update` | WSSE + LoginToken | `encryptedData` + `images` |
 | `/devices/list`, `/devices/create`, `/devices/update`, `/devices/remove` | WSSE + LoginToken | plain JSON |
+| `/devices/latestValue`, `/devices/history` | WSSE + LoginToken | plain JSON |
 | `/chat/converse` | WSSE + LoginToken | plain JSON |
 
-The last two rows (**Devices CRUD**, **Chat**) did not exist before this project — NanoServer only
-had a cookie-authenticated admin controller for device CRUD and a WSSE **read-only** `/mcp/devices`
-listing. See "NanoServer companion changes" below.
+The last three rows (**Devices CRUD**, **device latest/history**, **Chat**) did not exist before
+this project — NanoServer only had a cookie-authenticated admin controller for device CRUD/logs and
+a WSSE **read-only** `/mcp/devices` listing. See "NanoServer companion changes" below.
 
 ## Device WiFi provisioning
 
@@ -92,6 +97,52 @@ there's no API to force or guarantee reconnection. `releaseAndRestore()` is a re
 step (polls default-network state for up to 15s), not a forced reconnect. **Not verified on real
 hardware in this environment — flagged as the highest-risk area for on-device testing** (Samsung/
 Xiaomi have a history of being stricter about `WifiNetworkSpecifier` than stock/Pixel).
+
+## Devices list: edit vs. detail, and delete
+
+On `DevicesListScreen`, each row's pencil icon (`Icons.Filled.Edit`, replacing the trash icon that
+used to live there) opens `DeviceFormScreen` in edit mode; tapping the row body itself instead opens
+the new `DeviceReadingsScreen` (below). Delete moved off the list entirely: `DeviceFormScreen` now
+shows a bordered "Eliminar dispositivo" `OutlinedButton` (error-color border/container, only when
+`isEditMode`) below Save, behind an `AlertDialog` confirmation
+(`DeviceFormViewModel.onDeleteClick`/`confirmDelete`) — reuses the same
+`devices_delete_confirm_title`/`_message` strings the old list-screen dialog used, and reuses the
+existing `ProvisioningStep.Success` → `onProvisioned()` navigation-back-to-list path on success.
+
+## Device detail & history
+
+Tapping a device row opens `DeviceReadingsScreen`/`DeviceReadingsViewModel`, showing that device's
+latest reading, a line chart, and three selectors: which value to plot (Volts/Amps for Energía,
+Temp/Hum for Ambiente), a time range (Día/Mes/Año/Todo), and — for the first three ranges — a date
+(Material3 `DatePickerDialog`; hidden for "Todo"). Range → server granularity mapping lives in
+`domain/model/DeviceReading.kt`'s `DeviceHistoryRange` enum (Día=`byHour`, Mes=`byDay`, Año=`byMonth`,
+Todo=`byYear`); the `(from, until)` window for a given range + selected date is computed by the pure,
+clock-injectable `DeviceHistoryRangeCalculator.bounds(...)` (unit-tested in
+`DeviceHistoryRangeCalculatorTest`, mirroring `SecureUtilTest`'s clock-injection pattern).
+
+This needed two new NanoServer endpoints that didn't exist before this feature — the underlying
+`energyLogService`/`environmentLogService` history/latest-value queries were previously only
+reachable from `ChatWebService`'s internal Gemini/Grok tool-calls and from a cookie-authenticated
+admin controller (`EnergyController`/`EnvironmentController`), neither usable by this app's
+WSSE+LoginToken auth. `DeviceHistoryWebService.java` (new, mirrors `DevicesWebService`'s auth +
+ownership-check pattern exactly) adds `POST /api/services/devices/latestValue` and
+`POST /api/services/devices/history`, returning the existing `EnergyLogDto`/`EnvironmentLogDto`
+(latest) and `EnergyLogsDto`/`EnvironmentLogsDto` (history) — no new response DTOs needed
+server-side. **Not validated against live device history data in this environment** — same caveat
+as the chat/Gemini integration.
+
+Android-side, `DeviceReadingDto` (`data/remote/dto/DeviceHistoryDtos.kt`) is one unified
+nullable-field shape covering both server DTOs, relying on `NetworkModule`'s shared
+`Json { ignoreUnknownKeys = true }` to discard whichever fields don't apply — the same trick
+`DeviceSettingsDto` already used.
+
+**Chart library:** [Vico](https://github.com/patrykandpatrick/vico) (`compose-m3` artifact,
+2.1.2) — Compose-native, and its `rememberM3VicoTheme()` derives chart colors straight from
+`MaterialTheme.colorScheme` (so the line color matches `NaranjaOscuro` automatically without any
+hardcoded color in the chart code). **All Vico 2.x versions transitively require `androidx.core`
+≥1.15.0**, which fails Android's AAR-metadata check unless `compileSdk` is at least 35 — this is
+why `compileSdk` was bumped from 34 to 35 (see "Stack" above) specifically to unblock this one
+dependency; `minSdk`/`targetSdk` are untouched.
 
 ## Chat, voice, and the wake word
 
@@ -205,4 +256,12 @@ there pending review — do not assume they're pushed anywhere:
   `McpWebService`. A shared `DeviceQueryUtils` was considered (and is a reasonable follow-up) but
   skipped here to avoid modifying `McpWebService`'s existing, working code without a test harness
   to verify the refactor didn't regress it.
+- `DeviceHistoryWebService.java` (new) — `POST /api/services/devices/latestValue` and
+  `POST /api/services/devices/history`, added for the Android app's new device detail/history
+  screen (see "Device detail & history" above). WSSE + `LoginToken` authenticated with the same
+  ownership check as `DevicesWebService.update/remove`. Reuses the existing `EnergyLogDto`/
+  `EnvironmentLogDto`/`EnergyLogsDto`/`EnvironmentLogsDto` — no new response DTOs. New request
+  DTOs: `DeviceLatestRequestDto`, `DeviceHistoryRequestDto`. Its date-parsing/view-type-dispatch
+  code is intentionally a near-duplicate of `ChatWebService.toolEnergyHistory`/
+  `toolEnvironmentHistory`, same "known duplication, not refactored" rationale as above.
 - Verified: `mvn -o compile` succeeds for the whole project with these changes.

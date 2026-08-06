@@ -18,6 +18,7 @@ import com.fuerz4.assistant.presentation.auth.LoginScreen
 import com.fuerz4.assistant.presentation.auth.RegisterScreen
 import com.fuerz4.assistant.presentation.chat.ChatScreen
 import com.fuerz4.assistant.presentation.devices.DeviceFormScreen
+import com.fuerz4.assistant.presentation.devices.DeviceReadingsScreen
 import com.fuerz4.assistant.presentation.devices.DeviceTypePickerScreen
 import com.fuerz4.assistant.presentation.devices.DevicesListScreen
 import com.fuerz4.assistant.presentation.profile.ProfileScreen
@@ -99,6 +100,10 @@ fun Fuerz4NavGraph(
             composable(Destinations.Devices.route) {
                 DevicesListScreen(
                     onAddDevice = { navController.navigate(Destinations.DeviceTypePicker.route) },
+                    onOpenDetail = { device ->
+                        val deviceType = device.type?.wireValue ?: "energy"
+                        navController.navigate(Destinations.DeviceDetail.createRoute(deviceType, device.uuid))
+                    },
                     onEditDevice = { device ->
                         val deviceType = device.type?.wireValue ?: "energy"
                         navController.navigate(Destinations.DeviceForm.createRoute(deviceType, device.uuid))
@@ -133,6 +138,16 @@ fun Fuerz4NavGraph(
                         }
                     }
                 )
+            }
+
+            composable(
+                route = Destinations.DeviceDetail.route,
+                arguments = listOf(
+                    navArgument("deviceType") { },
+                    navArgument("uuid") { }
+                )
+            ) {
+                DeviceReadingsScreen(onBack = { navController.popBackStack() })
             }
         }
     }

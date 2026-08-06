@@ -113,6 +113,25 @@
     <string name="device_form_step_restoring">Restaurando tu red WiFi…</string>
     <string name="device_form_step_registering">Registrando dispositivo…</string>
     <string name="device_form_success">Dispositivo agregado correctamente.</string>
+    <string name="device_form_delete_button">Eliminar dispositivo</string>
+
+    <!-- Detalle e historial del dispositivo -->
+    <string name="device_readings_latest_title">Últimos valores</string>
+    <string name="device_readings_empty_latest">Todavía no hay lecturas para este dispositivo.</string>
+    <string name="device_readings_value_volts">Voltaje</string>
+    <string name="device_readings_value_amps">Corriente</string>
+    <string name="device_readings_value_temp">Temperatura</string>
+    <string name="device_readings_value_hum">Humedad</string>
+    <string name="device_readings_value_power">Potencia</string>
+    <string name="device_readings_value_frequency">Frecuencia</string>
+    <string name="device_readings_value_cos_phi">Coseno φ</string>
+    <string name="device_readings_refresh">Actualizar últimos valores</string>
+    <string name="device_readings_range_day">Día</string>
+    <string name="device_readings_range_month">Mes</string>
+    <string name="device_readings_range_year">Año</string>
+    <string name="device_readings_range_all">Todo</string>
+    <string name="device_readings_empty_chart">Sin datos para este período.</string>
+    <string name="device_readings_accumulated_energy_title">Energía acumulada</string>
 
     <!-- Chat -->
     <string name="chat_title">Fuerz4 Assistant</string>

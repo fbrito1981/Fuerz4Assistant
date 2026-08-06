@@ -16,6 +16,9 @@ sealed class Destinations(val route: String) {
         fun createRoute(deviceType: String, uuid: String? = null) =
             "device_form/$deviceType" + (uuid?.let { "?uuid=$it" } ?: "")
     }
+    data object DeviceDetail : Destinations("device_detail/{deviceType}/{uuid}") {
+        fun createRoute(deviceType: String, uuid: String) = "device_detail/$deviceType/$uuid"
+    }
 }
 
 val bottomNavDestinations = listOf(Destinations.Home, Destinations.Devices, Destinations.Profile)

@@ -57,7 +57,10 @@ data class DeviceFormUiState(
     val loadError: UiText? = null,
     val availableSsids: List<String> = emptyList(),
     val step: ProvisioningStep = ProvisioningStep.Form,
-    val validationError: UiText? = null
+    val validationError: UiText? = null,
+    val showDeleteConfirm: Boolean = false,
+    val isDeleting: Boolean = false,
+    val deleteError: UiText? = null
 )
 
 @HiltViewModel
@@ -149,6 +152,24 @@ class DeviceFormViewModel @Inject constructor(
     fun submit() {
         val state = _uiState.value
         if (state.isEditMode) submitEdit(state) else submitCreate(state)
+    }
+
+    fun onDeleteClick() = _uiState.update { it.copy(showDeleteConfirm = true) }
+
+    fun onDeleteDismiss() = _uiState.update { it.copy(showDeleteConfirm = false, deleteError = null) }
+
+    fun confirmDelete() {
+        val uuid = existingUuid ?: return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isDeleting = true, deleteError = null) }
+            deviceRepository.removeDevice(uuid)
+                .onSuccess { _uiState.update { it.copy(step = ProvisioningStep.Success, showDeleteConfirm = false) } }
+                .onFailure { throwable ->
+                    val uiText = (throwable as? NanoApiError)?.toUiText() ?: UiText.Resource(R.string.common_error_general)
+                    _uiState.update { it.copy(isDeleting = false, showDeleteConfirm = false, deleteError = uiText) }
+                }
+        }
     }
 
     private fun submitEdit(state: DeviceFormUiState) {

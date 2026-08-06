@@ -4,8 +4,12 @@ import com.fuerz4.assistant.data.remote.dto.AuthResultDto
 import com.fuerz4.assistant.data.remote.dto.ChatRequestDto
 import com.fuerz4.assistant.data.remote.dto.ChatResultDto
 import com.fuerz4.assistant.data.remote.dto.DeviceDto
+import com.fuerz4.assistant.data.remote.dto.DeviceHistoryRequestDto
+import com.fuerz4.assistant.data.remote.dto.DeviceLatestRequestDto
 import com.fuerz4.assistant.data.remote.dto.DeviceListRequestDto
 import com.fuerz4.assistant.data.remote.dto.DeviceListResultDto
+import com.fuerz4.assistant.data.remote.dto.DeviceReadingResultDto
+import com.fuerz4.assistant.data.remote.dto.DeviceReadingsResultDto
 import com.fuerz4.assistant.data.remote.dto.DeviceRemoveRequestDto
 import com.fuerz4.assistant.data.remote.dto.DeviceResultDto
 import com.fuerz4.assistant.data.remote.dto.SimpleResultDto
@@ -83,6 +87,18 @@ interface NanoApi {
         @Header("LoginToken") token: String,
         @Body body: DeviceRemoveRequestDto
     ): Response<SimpleResultDto>
+
+    @POST("api/services/devices/latestValue")
+    suspend fun latestDeviceReading(
+        @Header("LoginToken") token: String,
+        @Body body: DeviceLatestRequestDto
+    ): Response<DeviceReadingResultDto>
+
+    @POST("api/services/devices/history")
+    suspend fun deviceHistory(
+        @Header("LoginToken") token: String,
+        @Body body: DeviceHistoryRequestDto
+    ): Response<DeviceReadingsResultDto>
 
     @POST("api/services/chat/converse")
     suspend fun converse(

@@ -56,21 +56,4 @@ class DevicesListViewModel @Inject constructor(
                 }
         }
     }
-
-    fun deleteDevice(uuid: String) {
-        if (!networkMonitor.isOnline.value) {
-            _uiState.update { it.copy(error = UiText.Resource(R.string.common_offline_message)) }
-            return
-        }
-
-        viewModelScope.launch {
-            deviceRepository.removeDevice(uuid)
-                .onSuccess { refresh() }
-                .onFailure { throwable ->
-                    val uiText = (throwable as? NanoApiError)?.toUiText()
-                        ?: UiText.Resource(R.string.common_error_general)
-                    _uiState.update { it.copy(error = uiText) }
-                }
-        }
-    }
 }

@@ -11,8 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -22,12 +21,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -41,11 +36,11 @@ import com.fuerz4.assistant.presentation.theme.NaranjaClaro
 @Composable
 fun DevicesListScreen(
     onAddDevice: () -> Unit,
+    onOpenDetail: (Device) -> Unit,
     onEditDevice: (Device) -> Unit,
     viewModel: DevicesListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var deviceToDelete by remember { mutableStateOf<Device?>(null) }
 
     Scaffold(
         floatingActionButton = {
@@ -75,39 +70,18 @@ fun DevicesListScreen(
                     items(uiState.devices, key = { it.uuid }) { device ->
                         DeviceRow(
                             device = device,
-                            onClick = { onEditDevice(device) },
-                            onDelete = { deviceToDelete = device }
+                            onClick = { onOpenDetail(device) },
+                            onEdit = { onEditDevice(device) }
                         )
                     }
                 }
             }
         }
     }
-
-    deviceToDelete?.let { device ->
-        AlertDialog(
-            onDismissRequest = { deviceToDelete = null },
-            title = { Text(stringResource(R.string.devices_delete_confirm_title)) },
-            text = { Text(stringResource(R.string.devices_delete_confirm_message, device.name)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    viewModel.deleteDevice(device.uuid)
-                    deviceToDelete = null
-                }) {
-                    Text(stringResource(R.string.common_delete))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { deviceToDelete = null }) {
-                    Text(stringResource(R.string.common_cancel))
-                }
-            }
-        )
-    }
 }
 
 @Composable
-private fun DeviceRow(device: Device, onClick: () -> Unit, onDelete: () -> Unit) {
+private fun DeviceRow(device: Device, onClick: () -> Unit, onEdit: () -> Unit) {
     Card(
         onClick = onClick,
         colors = CardDefaults.cardColors(containerColor = NaranjaClaro),
@@ -119,8 +93,8 @@ private fun DeviceRow(device: Device, onClick: () -> Unit, onDelete: () -> Unit)
                 Text(device.name, style = MaterialTheme.typography.titleLarge)
                 device.model?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
             }
-            IconButton(onClick = onDelete, modifier = Modifier.align(Alignment.CenterEnd)) {
-                Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.common_delete))
+            IconButton(onClick = onEdit, modifier = Modifier.align(Alignment.CenterEnd)) {
+                Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.common_edit))
             }
         }
     }

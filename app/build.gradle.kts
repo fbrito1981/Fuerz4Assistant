@@ -20,7 +20,7 @@ fun apiKey(name: String): String = "\"${apiKeysProperties.getProperty(name, "")}
 
 android {
     namespace = "com.fuerz4.assistant"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.fuerz4.assistant"
@@ -101,6 +101,7 @@ dependencies {
     implementation(libs.datastore.preferences)
 
     implementation(libs.vosk.android)
+    implementation(libs.vico.compose.m3)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
